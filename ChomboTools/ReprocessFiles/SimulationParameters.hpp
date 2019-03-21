@@ -30,8 +30,6 @@ class SimulationParameters : public ChomboParameters
         // extraction params
         dx.fill(coarsest_dx);
         origin.fill(coarsest_dx / 2.0);
-
-        plot_interval = 1;
     }
 
     int num_files, start_file, checkpoint_interval;
