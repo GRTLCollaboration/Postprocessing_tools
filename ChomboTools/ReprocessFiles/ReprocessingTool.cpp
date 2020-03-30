@@ -52,9 +52,6 @@ int runReprocessingTool(int argc, char *argv[])
     GRAMR gr_amr;
     DefaultLevelFactory<ReprocessingLevel> empty_level_fact(gr_amr, sim_params);
     setupAMRObject(gr_amr, empty_level_fact);
-    AMRInterpolator<Lagrange<4>> interpolator(
-        gr_amr, sim_params.origin, sim_params.dx, sim_params.verbosity);
-    gr_amr.set_interpolator(&interpolator);
 
     // now loop over chk files
     for (int ifile = sim_params.start_file; ifile < sim_params.num_files;
