@@ -17,21 +17,22 @@ plot_variable = "chi"
 outputfile_prefix = plot_variable
 output_directory = "."
 # max and min values for colourbar
-set_min_max = 0 # 1 for true, 0 for false
-min_value = 1e-20
-max_value = 1e-16
+set_min_max = 1 # 1 for true, 0 for false
+min_value = -0.01
+max_value = 0.01
 # slice origin and normal direction
-origin_point_x = 0
-origin_point_y = 0
-origin_point_z = 0
+origin_point_x = 256
+origin_point_y = 256
+origin_point_z = 256
 normal_in_x = 0
 normal_in_y = 0
 normal_in_z = 1
 # max and min coords in the sliced plane (e.g. x and y if normal to z)
-min_u = 500.0
-max_u = 524.0
-min_v = 500.0
-max_v = 524.0
+# NB relative to origin as defined above
+min_u = -10.0
+max_u = 10.0
+min_v = -10.0
+max_v = 10.0
 
 # --------------------------------------------------------------------------
 # From here you only need to amend if you want to do something non standard
@@ -98,6 +99,11 @@ for i in range ( begin_file , end_file + file_step , file_step) :
 	SliceAtts.project2d = 1
 	SliceAtts.flip = 0
 	SetOperatorOptions(SliceAtts, 1)
+
+	# plot all levels
+	silr = SILRestriction()
+	silr.TurnOnAll()
+	SetPlotSILRestriction(silr ,1)
 	
 	# engage!
 	DrawPlots()
@@ -125,7 +131,7 @@ for i in range ( begin_file , end_file + file_step , file_step) :
 	SaveWindowAtts.height = 1024
 	SaveWindowAtts.quality = 80
 	# resConstraint = NoConstraint, EqualWidthHeight, ScreenProportions
-	SaveWindowAtts.resConstraint = SaveWindowAtts.ScreenProportions  
+	SaveWindowAtts.resConstraint = SaveWindowAtts.EqualWidthHeight 
 	SetSaveWindowAttributes(SaveWindowAtts)
 	SaveWindow()
 	
