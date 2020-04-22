@@ -10,8 +10,8 @@ path_to_hdf5_files = "path_to_hdf5s"
 components = ["phi", "lapse", "chi"]
 
 # specify a begin and end point for the lineout, e.g. two (x,y) points if you sliced normal to z
-[u_min, v_min] = [0, 0]
-[u_max, v_max] = [3000, 0]
+[u_min, v_min, q_min] = [0, 0, 0]
+[u_max, v_max, q_max] = [3000, 0, 0]
 
 def rendering():
     for name in components:
