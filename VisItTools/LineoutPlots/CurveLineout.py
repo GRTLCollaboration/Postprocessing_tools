@@ -10,8 +10,8 @@ path_to_hdf5_files = "path_to_hdf5s"
 components = ["phi", "lapse", "chi"]
 
 # specify a begin and end point for the lineout, e.g. two (x,y) points if you sliced normal to z
-[u_min, v_min, q_min] = [0, 0, 0]
-[u_max, v_max, q_max] = [3000, 0, 0]
+[x_min, y_min, z_min] = [0, 0, 0]
+[x_max, y_max, z_max] = [3000, 0, 0]
 
 def rendering():
     for name in components:
@@ -20,8 +20,8 @@ def rendering():
 
             AddPlot("Curve", "operators/Lineout/" + name, 1, 1)
             LineoutAtts = LineoutAttributes()
-            LineoutAtts.point1 = (u_min, v_min, 0)
-            LineoutAtts.point2 = (u_max, v_max, 0)
+            LineoutAtts.point1 = (x_min, y_min, z_min)
+            LineoutAtts.point2 = (x_max, y_max, z_min)
             SetOperatorOptions(LineoutAtts, 1)    
 
         def window_options():
