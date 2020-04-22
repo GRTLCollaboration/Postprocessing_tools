@@ -21,7 +21,7 @@ def rendering():
             AddPlot("Curve", "operators/Lineout/" + name, 1, 1)
             LineoutAtts = LineoutAttributes()
             LineoutAtts.point1 = (x_min, y_min, z_min)
-            LineoutAtts.point2 = (x_max, y_max, z_min)
+            LineoutAtts.point2 = (x_max, y_max, z_max)
             SetOperatorOptions(LineoutAtts, 1)    
 
         def window_options():
