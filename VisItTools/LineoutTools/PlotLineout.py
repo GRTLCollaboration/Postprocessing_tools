@@ -16,10 +16,6 @@ path_to_hdf5_files = "path_to_hdf5s"
 plot_variable = "phi"
 outputfile_prefix = plot_variable + '_'
 output_directory = "."
-# max and min values for colourbar
-set_min_max = 0 # 1 for true, 0 for false
-min_value = -0.01
-max_value = 0.01
 # slice origin and normal direction
 origin_point_x = 0 # middle of the box is [L/2, L/2, L/2]
 origin_point_y = 0
@@ -76,10 +72,6 @@ for i in range ( begin_file , end_file + file_step , file_step) :
 	PseudocolorAtts.skewFactor = 1
      # limitsMode =  OriginalData, CurrentPlot
 	PseudocolorAtts.limitsMode = PseudocolorAtts.OriginalData
-	PseudocolorAtts.minFlag = set_min_max
-	PseudocolorAtts.min = min_value
-	PseudocolorAtts.maxFlag = set_min_max
-	PseudocolorAtts.max = max_value
 	#PseudocolorAtts.colorTableName = "BuGn"
 	PseudocolorAtts.invertColorTable = 0
      # opacityType = ColorTable, FullyOpaque, Constant, Ramp, VariableRange
