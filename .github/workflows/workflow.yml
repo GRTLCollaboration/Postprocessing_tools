@@ -1,6 +1,5 @@
 name: Pyflakes Syntax Checker
-on:
-  push:
+on: [push, pull_request]
   
  lint:
     name: Lint
