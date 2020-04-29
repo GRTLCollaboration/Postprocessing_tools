@@ -24,3 +24,5 @@ Decomposition of Psi4 into spin weighted spherical harmonics. This is largely ba
 
 ## parallel_radius.py
 Script to calculate radius of an axion star. See the appendix of this [paper](https://arxiv.org/abs/1806.09367) for more information.
+
+## spherical_horizon_finder.py

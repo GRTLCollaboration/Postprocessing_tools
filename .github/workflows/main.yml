@@ -27,6 +27,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install --upgrade pyflakes
-    - name: Install pyflakes
+    - name: Run pyflakes
       run: |
         python -m pyflakes ./YTAnalysisTools/*.py
