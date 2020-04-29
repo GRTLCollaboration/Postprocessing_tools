@@ -4,7 +4,6 @@ from numpy.linalg import inv
 from scipy.interpolate import interp1d
 from scipy.optimize import fsolve
 import time
-import os
 import matplotlib
 matplotlib.use('Agg')
 yt.enable_parallelism()
