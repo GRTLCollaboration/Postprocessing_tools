@@ -1,6 +1,7 @@
 name: Pyflakes Syntax Checker
 on: [push, pull_request]
-  
+
+jobs:
  lint:
     name: Lint
     runs-on: ubuntu-latest
