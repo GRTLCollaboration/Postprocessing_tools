@@ -1,4 +1,4 @@
-name: Pyflakes Syntax Checker
+name: Gitaction for python3
 on: [push, pull_request]
 
 jobs:
@@ -6,4 +6,6 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      -uses: lgeiger/pyflakes-action@v1.0.1
+     - name: Pyflakes Syntax Check
+       uses: lgeiger/pyflakes-action@v1.0.1
+
