@@ -1,8 +1,9 @@
-workflow "Example Workflow" {
-  on = "push"
-  resolves = ["Lint"]
-}
-
-action "Lint" {
-  uses = "lgeiger/pyflakes-action@master"
-}
+name: Pyflakes Syntax Checker
+on:
+  push:
+  
+ lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      -uses: lgeiger/pyflakes-action@v1.0.1
