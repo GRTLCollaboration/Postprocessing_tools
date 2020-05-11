@@ -29,7 +29,7 @@ rcParams["axes.formatter.limits"] = [-3, 3]
 
 # CHANGE ME
 # Loading dataset (Load from one folder up)
-data_location = "../../plt*"  # Data file location
+data_location = "../../*hdf5"  # Data file location
 
 # Loading dataset
 ts = yt.load(data_location)
@@ -69,6 +69,13 @@ for sto, i in ts.piter(storage=storage):
     # Add the M2 and L2 Fields
     i.add_field("H2", _H2, units="")
     i.add_field("M2", _M2, units="")
+
+
+    # Some operators requires periodic boundaries.  This dataset has
+    # open boundary conditions.  We need to hack it for now (this will be fixed
+    # in future version of yt)
+    i.periodicity = (True, True, True)
+
 
     # L2H
     meanH2 = ad.mean("H2", weight="cell_volume")
