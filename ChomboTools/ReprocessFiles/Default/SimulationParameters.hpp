@@ -7,8 +7,8 @@
 #define SIMULATIONPARAMETERS_HPP_
 
 // General includes
-#include "GRParmParse.hpp"
 #include "ChomboParameters.hpp"
+#include "GRParmParse.hpp"
 
 class SimulationParameters : public ChomboParameters
 {
@@ -23,16 +23,20 @@ class SimulationParameters : public ChomboParameters
     void readParams(GRParmParse &pp)
     {
         // Grid setup
-        pp.get("num_files", num_files);
-        pp.get("start_file", start_file);
-        pp.get("checkpoint_interval", checkpoint_interval);
+        pp.load("num_files", num_files, -1);
+        pp.load("start_file", start_file);
+
+        if (num_files == -1)
+            pp.load("end_file", end_file);
+        else
+            end_file = start_file + num_files * checkpoint_interval;
 
         // extraction params
         dx.fill(coarsest_dx);
         origin.fill(coarsest_dx / 2.0);
     }
 
-    int num_files, start_file, checkpoint_interval;
+    int num_files, start_file, end_file;
     std::array<double, CH_SPACEDIM> origin,
         dx; // location of coarsest origin and dx
 };

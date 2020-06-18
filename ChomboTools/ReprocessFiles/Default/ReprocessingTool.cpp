@@ -14,22 +14,21 @@
 #endif
 
 // General includes:
+#include "parstream.H" //Gives us pout()
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <sys/time.h>
-#include "parstream.H" //Gives us pout()
 using std::endl;
 
 // Problem specific includes:
-#include "AMRInterpolator.hpp"
 #include "DefaultLevelFactory.hpp"
 #include "GRAMR.hpp"
-#include "ReprocessingLevel.hpp"
 #include "InterpolationQuery.hpp"
 #include "Lagrange.hpp"
+#include "ReprocessingLevel.hpp"
 #include "SetupFunctions.hpp"
 #include "SimulationParameters.hpp"
 #include "UserVariables.hpp"
@@ -53,16 +52,21 @@ int runReprocessingTool(int argc, char *argv[])
     DefaultLevelFactory<ReprocessingLevel> empty_level_fact(gr_amr, sim_params);
     setupAMRObject(gr_amr, empty_level_fact);
 
+    // Do you need me the interpolator? Uncomment
+    // set up interpolator
+    // AMRInterpolator<Lagrange<4>> interpolator(
+    //     gr_amr, sim_params.origin, sim_params.dx, sim_params.verbosity);
+    // gr_amr.set_interpolator(&interpolator);
+
     // now loop over chk files
-    for (int ifile = sim_params.start_file; ifile < sim_params.num_files;
-         ifile++)
+    for (int ifile = sim_params.start_file; ifile <= sim_params.end_file;
+         ifile += sim_params.checkpoint_interval)
     {
         // set up the file from next checkpoint
         std::ostringstream current_file;
-        current_file << std::setw(6) << std::setfill('0')
-                     << ifile * sim_params.checkpoint_interval;
-        std::string restart_file(sim_params.checkpoint_prefix + current_file.str() +
-                                 ".3d.hdf5");
+        current_file << std::setw(6) << std::setfill('0') << ifile;
+        std::string restart_file(sim_params.checkpoint_prefix +
+                                 current_file.str() + ".3d.hdf5");
         HDF5Handle handle(restart_file, HDF5Handle::OPEN_RDONLY);
         gr_amr.setupForRestart(handle);
         handle.close();

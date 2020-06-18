@@ -20,8 +20,6 @@ class ReprocessingLevel : public GRAMRLevel
     void postRestart()
     {
         // Add code here to do what you need it to do on each level
-        // Note that if you want the AMRInterpolator you need to define it
-        // and set it here (currently it is just a nullptr)
         pout() << "The time is " << m_time << " on level " << m_level 
                << ". Your wish is my command." << endl;
     }
