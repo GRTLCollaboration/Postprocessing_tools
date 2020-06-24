@@ -20,7 +20,7 @@ class ReprocessingLevel : public GRAMRLevel
     void postRestart()
     {
         // Add code here to do what you need it to do on each level
-        pout() << "The time is " << m_time << " on level " << m_level 
+        pout() << "The time is " << m_time << " on level " << m_level
                << ". Your wish is my command." << endl;
     }
 
@@ -30,7 +30,10 @@ class ReprocessingLevel : public GRAMRLevel
     }
 
     virtual void computeTaggingCriterion(FArrayBox &tagging_criterion,
-                                         const FArrayBox &current_state){};
+                                         const FArrayBox &current_state)
+    {
+        tagging_criterion.setVal(0.);
+    };
 };
 
 #endif /* REPROCESSINGLEVEL_HPP_ */

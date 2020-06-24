@@ -7,7 +7,6 @@
 #define REPROCESSINGLEVEL_HPP_
 
 #include "GRAMRLevel.hpp"
-#include "Weyl4.hpp"
 #include "WeylExtraction.hpp"
 
 class ReprocessingLevel : public GRAMRLevel
@@ -45,7 +44,10 @@ class ReprocessingLevel : public GRAMRLevel
     }
 
     virtual void computeTaggingCriterion(FArrayBox &tagging_criterion,
-                                         const FArrayBox &current_state){};
+                                         const FArrayBox &current_state)
+    {
+        tagging_criterion.setVal(0.);
+    };
 };
 
 #endif /* REPROCESSINGLEVEL_HPP_ */
