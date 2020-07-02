@@ -3,14 +3,14 @@
 # Last Updated 16/12/2019
 
 # Load the modules
+from matplotlib import rcParams
+import matplotlib.pyplot as plt
 import yt
 import numpy as np
 import time
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from matplotlib import rcParams
 
 # Timings
 start_time = time.time()
@@ -38,16 +38,19 @@ center = ts[0].domain_right_edge / 2.0
 adjusted_right = int(center[0]) * 2 - 8
 print(center)
 
-def _detgamma(field,data):
+
+def _detgamma(field, data):
     return data["chi"]**(-3.0)
 
-def _rhoJ(field,data):
-    return -(-data["y"]*data["s1"]+data["x"]*data["s2"])*data["detgamma"]**(1.0/2.0)
 
-def _rhofixed(field,data):
-    return (data["rho"]*data["lapse"] - data["s1"]*data["shift1"]- data["s2"]*data["shift2"]- data["s3"]*data["shift3"]) * data["detgamma"]**(1.0/2.0)
+def _rhoJ(field, data):
+    return -(-data["y"] * data["s1"] + data["x"] *
+             data["s2"]) * data["detgamma"]**(1.0 / 2.0)
 
 
+def _rhofixed(field, data):
+    return (data["rho"] * data["lapse"] - data["s1"] * data["shift1"] - data["s2"]
+            * data["shift2"] - data["s3"] * data["shift3"]) * data["detgamma"]**(1.0 / 2.0)
 
 
 # Define an empty storage dictionary for collecting information
@@ -56,22 +59,21 @@ storage = {}
 
 for sto, i in ts.piter(storage=storage):
 
-    i.add_field("detgamma", _detgamma, units = "")
-    i.add_field("rhoJ", _rhoJ, units = "cm")
-    i.add_field("rhofixed", _rhofixed, units = "")
+    i.add_field("detgamma", _detgamma, units="")
+    i.add_field("rhoJ", _rhoJ, units="cm")
+    i.add_field("rhofixed", _rhofixed, units="")
 
     # Defining domain of integration
     ad = i.r[
-        int(center[0]) - 20 : int(center[0]) + 20,
-        int(center[0]) - 20 : int(center[0]) + 20,
-        0  :  20
+        int(center[0]) - 20: int(center[0]) + 20,
+        int(center[0]) - 20: int(center[0]) + 20,
+        0: 20
     ]
     vol = ad.sum("cell_volume")
-    mass = vol*ad.mean("rhofixed", weight="cell_volume")
-    angmom = vol*ad.mean("rhoJ", weight="cell_volume")
+    mass = vol * ad.mean("rhofixed", weight="cell_volume")
+    angmom = vol * ad.mean("rhoJ", weight="cell_volume")
 
     array = [i.current_time, mass, angmom]
-
 
     sto.result = array
     sto.result_id = str(i)
