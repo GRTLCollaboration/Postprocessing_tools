@@ -1,10 +1,11 @@
-# parallel_Psi4.py
+# parallel_spherical_integrator.py
 # James Widdicombe
-# Last Updated 16/12/2019
-# Decomposition of Psi4 into spin weighted spherical harmonics
-# l = 2,3,4
+# Last Updated 28/09/2020
+# Integrate a field over a sphere
 
 # Import the modules
+from matplotlib import rcParams
+import matplotlib.pyplot as plt
 import yt
 import numpy as np
 from numpy import pi
@@ -12,8 +13,6 @@ import time
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from matplotlib import rcParams
 
 start_time = time.time()
 
@@ -74,8 +73,10 @@ for sto, i in ts.piter(storage=storage):
 
         phi_var = phi[k]
         theta_var = theta[k]
-        x1 = extraction_radius * np.cos(phi_var) * np.sin(theta_var) + float(center[0])
-        y1 = extraction_radius * np.sin(phi_var) * np.sin(theta_var) + float(center[1])
+        x1 = extraction_radius * \
+            np.cos(phi_var) * np.sin(theta_var) + float(center[0])
+        y1 = extraction_radius * \
+            np.sin(phi_var) * np.sin(theta_var) + float(center[1])
         z1 = extraction_radius * np.cos(theta_var) + float(center[2])
         c = [x1, y1, z1]
         ptn = i.point(c)
@@ -85,7 +86,6 @@ for sto, i in ts.piter(storage=storage):
         else:
             Imag = 0
         Integrand = Real + 1j * Imag
-
 
         Weyl4_l2_m0 += (
             4 * pi * w[k] * Integrand * extraction_radius ** 2
