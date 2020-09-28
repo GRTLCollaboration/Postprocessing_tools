@@ -26,9 +26,10 @@ yt.enable_parallelism()
 
 # Script Parameters
 extraction_radius = 60  # radius of extraction
+# Name of variable
 RealPart = "chi"
 # Imaginary part of the variable you want to integrate over
-#ImagPart = "chi"
+ImagPart = None
 data_location = "../../ScalarField_*.3d.hdf5"  # Data file location
 
 # Loading dataset
