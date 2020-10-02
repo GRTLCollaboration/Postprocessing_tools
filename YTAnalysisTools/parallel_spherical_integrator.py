@@ -87,14 +87,14 @@ for sto, i in ts.piter(storage=storage):
             Imag = 0
         Integrand = Real + 1j * Imag
 
-        Weyl4_l2_m0 += (
+        Integral += (
             4 * pi * w[k] * Integrand * extraction_radius ** 2
         )
 
         # positive m
     array = [
         i.current_time,
-        Weyl4_l2_m0,
+        Integral,
         time.time() - L_start,
     ]
     sto.result = array
@@ -146,16 +146,3 @@ if yt.is_root():
         plt.grid()
         plt.savefig(labels[i] + ".png", bbox_inches="tight")
         plt.close()
-    # All Modes
-    plt.figure(len(labels), figsize=(10, 6))
-    ax = plt.subplot(111)
-    for i in range(0, len(labels)):
-        ax.plot(time_retarded, np.real(All_data[i]), label=labels[i])
-    box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-    plt.xlabel(r"$t_{ret}~[1/m_{a}]$")
-    plt.ylabel(r"$r\Psi_4$")
-    plt.grid()
-    plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.0)
-    plt.savefig("All.png", bbox_inches="tight")
-    plt.close()
