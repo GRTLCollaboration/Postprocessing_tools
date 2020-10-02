@@ -61,10 +61,8 @@ for sto, i in ts.piter(storage=storage):
     # Timings
     L_start = time.time()
 
-    # Initalising
-    Sr = 0 + 1j * 0
-    # l = 2
-    Weyl4_l2_m0 = 0 + 1j * 0
+    # Init
+    Integral = 0 + 1j * 0
 
     Weyl4data = []
 
