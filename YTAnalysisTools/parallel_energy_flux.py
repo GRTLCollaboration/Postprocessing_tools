@@ -75,22 +75,68 @@ for sto, i in ts.piter(storage=storage):
         c = [x1, y1, z1]
 
         ptn = i.point(c)
-        Sx = float(ptn['S1'][0])
-        Sy = float(ptn['S2'][0])
-        Sz = float(ptn['S3'][0])
-        Svec = np.array([Sx,Sy,Sz])
+
+        lapse = float(ptn['lapse'][0])
+
+
+        s1 = float(ptn['s1'][0])
+        s2 = float(ptn['s2'][0])
+        s3 = float(ptn['s3'][0])
+        # index is lowered
+        Svec = np.array([s1,s2,s3])
+
+        chi = float(ptn['chi'][0])
+        g11 = float(ptn['gamma11'][0])
+        g22 = float(ptn['gamma22'][0])
+        g33 = float(ptn['gamma33'][0])
+        g12 = float(ptn['gamma12'][0])
+        g13 = float(ptn['gamma13'][0])
+        g23 = float(ptn['gamma23'][0])
+        gamma = 1.0/chi*np.array([[g11,g12,g13],[g12,g22,g23],[g13,g23,g33]])
+
+
+        s11 = float(ptn['s11'][0])
+        s22 = float(ptn['s22'][0])
+        s33 = float(ptn['s33'][0])
+        s12 = float(ptn['s12'][0])
+        s13 = float(ptn['s13'][0])
+        s23 = float(ptn['s23'][0])
+        # both index are lowered
+        Sten = np.array([[s11,s12,s13],[s12,s22,s23],[s13,s23,s33]])
+
+        shift1 = float(ptn['shift1'][0])
+        shift2 = float(ptn['shift2'][0])
+        shift3 = float(ptn['shift3'][0])
+        shift = np.array([shift1,shift2,shift3])
 
         x = float(ptn['x'][0])
         y = float(ptn['y'][0])
         z = float(ptn['z'][0])
         rvec = np.array([x,y,z])
         norm = np.linalg.norm(rvec,2)
-        rvec = 1/norm * rvec
+        N_U = 1/norm * rvec
+
+        Force_x = 0
+        for j in range(3):
+            Force_x +=lapse*N_U[j]*Sten[j][0]
+
+        for j in range(3):
+            for l in range(3):
+                Force_x += -gamma[l][j] * N_U[l] * shift[j] * Svec[0]
+
+        Force_y = 0
+        for j in range(3):
+            Force_y +=lapse* N_U[j]*Sten[j][1]
+
+        for j in range(3):
+            for l in range(3):
+                Force_y += -gamma[l][j] * N_U[l] * shift[j] * Svec[1]
+
+        Force_theta = - np.sin(theta_var)*Force_x + np.cos(theta_var)*Force_y
 
         Imag = 0
-        Integrand = np.dot(Svec,rvec)
         Integral += (
-            4 * pi * w[k] * Integrand * extraction_radius ** 2
+            4 * pi * w[k] * Force_theta * extraction_radius ** 2
         )
 
         # positive m
