@@ -1,0 +1,74 @@
+#Params for runtime inputs
+N_full = 32
+L_full = 16
+max_level = 1
+
+# For read in of files
+# don't add a 'restart_file' parameter so that 'setupAMRObject' doesn't restart
+# (as we do it later in the main by ourselves)
+chk_prefix = /home/taigofr/Git/GRChombo_public/Examples/BinaryBH/BinaryBH_
+checkpoint_interval = 1
+start_file = 0
+end_file = 5
+
+# For desired outputs, set plot interval to zero to turn off plot outputs
+plot_interval = 0
+plot_prefix = PlotFile
+
+# From here it is mostly dummy params
+verbosity = 0
+regrid_interval = 1 1 1 1
+dt_multiplier = 0.25
+max_grid_size = 32
+block_factor = 4
+
+#boundaries and periodicity of grid
+#Periodic directions - 0 = false, 1 = true
+isPeriodic = 1 1 1
+# if not periodic, then specify the boundary type
+# 0 = static, 1 = sommerfeld, 2 = reflective
+# (see BoundaryConditions.hpp for details)
+hi_boundary = 1 1 1
+lo_boundary = 1 1 1
+
+# if reflective boundaries selected, must set
+# parity of all vars (in order given by UserVariables.hpp)
+# 0 = even
+# 1,2,3 = odd x, y, z
+# 4,5,6 = odd xy, yz, xz
+# 7     = odd xyz
+vars_parity            = 0 0 4 6 0 5 0    #chi and hij
+                         0 0 4 6 0 5 0    #K and Aij
+                         0 1 2 3          #Theta and Gamma
+                         0 1 2 3 1 2 3    #lapse shift and B
+                         0 1 2 3          #Ham and Mom
+                         0 0              #Weyl
+
+# if sommerfeld boundaries selected, must select 
+# asymptotic values (in order given by UserVariables.hpp)
+vars_asymptotic_values = 1.0 1.0 0.0 0.0 1.0 0.0 1.0 #chi and hij
+                         0.0 0.0 0.0 0.0 0.0 0.0 0.0 #K and Aij
+                         0.0 0.0 0.0 0.0             #Theta and Gamma
+                         1.0 0.0 0.0 0.0 0.0 0.0 0.0 #lapse shift and B
+                         0.0 0.0 0.0 0.0             #Ham and Mom
+                         0.0 0.0                     #Weyl
+
+#Apparent Horizon finder 
+AH_activate = 1
+AH_num_ranks = 20
+AH_num_points_u = 30
+AH_num_points_v = 50
+AH_solve_interval = 1
+AH_print_interval = 1
+#AH_doArea = true
+#AH_doSpin = true
+#AH_trackCenter = true
+#AH_predictCenter = true
+#AH_merger_search_factor = 1. #-1 to deactivate
+#AH_merger_pre_factor = 1.
+#AH_level_to_run = 0
+#AH_allow_re_attempt = 0
+#AH_start_time = 0.0
+AH_verbose = 1
+
+AH_initial_guess = 0.5
