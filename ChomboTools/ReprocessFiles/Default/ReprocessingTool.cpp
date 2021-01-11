@@ -33,10 +33,6 @@ using std::endl;
 #include "SimulationParameters.hpp"
 #include "UserVariables.hpp"
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 int runReprocessingTool(int argc, char *argv[])
 {
     // Load the parameter file and construct the SimulationParameter class

@@ -6,10 +6,14 @@
 #ifndef USERVARIABLES_HPP
 #define USERVARIABLES_HPP
 
+#include "EmptyDiagnosticVariables.hpp"
+
 // assign an enum to each variable
 enum
 {
     c_chi,
+
+    c_Ham,
 
     c_Weyl4_Re,
     c_Weyl4_Im,
@@ -19,10 +23,10 @@ enum
 
 namespace UserVariables
 {
-static constexpr char const *variable_names[NUM_VARS] = {"chi",
-
-                                                         "Weyl4_Re",
-                                                         "Weyl4_Im"};
+static const std::array<std::string, NUM_VARS> variable_names = {
+    "chi", "Ham", "Weyl4_Re", "Weyl4_Im"};
 }
+
+#include "UserVariables.inc.hpp"
 
 #endif /* USERVARIABLES_HPP */

@@ -6,10 +6,8 @@
 # the same as in the example you ran.
 
 #Params for runtime inputs
-N1 = 32
-N2 = 32
-N3 = 32
-L = 16
+N_full = 32
+L_full = 16
 max_level = 1 # There are (max_level+1) grids, so min is zero
 
 # For read in of files
@@ -18,7 +16,7 @@ max_level = 1 # There are (max_level+1) grids, so min is zero
 chk_prefix = ../../../../GRChombo_public/Examples/BinaryBH/BinaryBHPlot_
 checkpoint_interval = 2 # actually plot_interval as we're using plot files
 start_file = 0
-#num_files = 3
+#num_files = 6
 end_file = 10
 
 # For desired outputs, set plot interval to zero to turn off plot outputs
@@ -28,7 +26,7 @@ plot_prefix = PlotFile
 # From here it is mostly dummy params
 verbosity = 0
 regrid_interval = 0 0 0 0 0
-dt_multiplier = 0.25
 max_grid_size = 16
 block_factor = 8
-isPeriodic = 1 1 1
+dt_multiplier = 0.25 # needed if you want to use m_dt or m_time
+isPeriodic = 1 1 1  # are these correct?

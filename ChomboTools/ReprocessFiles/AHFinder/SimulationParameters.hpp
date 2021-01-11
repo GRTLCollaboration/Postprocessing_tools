@@ -29,7 +29,7 @@ class SimulationParameters : public SimulationParametersBase
         if (num_files == -1)
             pp.load("end_file", end_file);
         else
-            end_file = start_file + num_files * checkpoint_interval;
+            end_file = start_file + (num_files - 1) * checkpoint_interval;
 
 #ifdef USE_AHFINDER
         pp.load("AH_initial_guess", AH_initial_guess);

@@ -28,8 +28,8 @@ class SimulationParameters : public ChomboParameters
 
         if (num_files == -1)
             pp.load("end_file", end_file);
-        else
-            end_file = start_file + num_files * checkpoint_interval;
+        else // num files includes start file
+            end_file = start_file + (num_files - 1) * checkpoint_interval;
 
         // extraction params
         dx.fill(coarsest_dx);

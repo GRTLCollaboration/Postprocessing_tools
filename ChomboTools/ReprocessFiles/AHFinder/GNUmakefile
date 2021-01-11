@@ -18,6 +18,7 @@ src_dirs := $(GRCHOMBO_SOURCE)/utils \
             $(GRCHOMBO_SOURCE)/CCZ4  \
             $(GRCHOMBO_SOURCE)/GRChomboCore  \
             $(GRCHOMBO_SOURCE)/AMRInterpolator \
+            $(GRCHOMBO_SOURCE)/BlackHoles \
             $(GRCHOMBO_SOURCE)/ApparentHorizonFinder
 
 include $(CHOMBO_HOME)/mk/Make.test
