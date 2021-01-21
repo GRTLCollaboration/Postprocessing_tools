@@ -38,7 +38,7 @@ variable_names = ["rho", "K", "Pi"]
 # ("max",field) ... maximum of differnt field
 # [x,y,z] ... custom center
 center =  "c"
-# Example for symmetric boundary condtions
+# Example for symmetric boundary conditions
 #center = get_center(ts)
 #center[0] = 0
 
