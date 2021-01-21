@@ -8,7 +8,18 @@
 import yt
 import os
 import matplotlib
-from mpi4py import MPI
+
+def get_center(ds):
+    # Small function that gets center for both single
+    # or multiple dataset
+    #   input: ds .. YT dataset
+    #   return: center ... vector with center of box
+    center = None
+    if hasattr(ds,'domain_right_edge'):
+        center = ds.domain_right_edge / 2.0
+    elif hasattr(ds[0],'domain_right_edge'):
+        center = ds[0].domain_right_edge / 2.0
+    return center
 
 matplotlib.use("Agg")
 
@@ -16,15 +27,20 @@ matplotlib.use("Agg")
 yt.enable_parallelism()
 
 data_location = "../../*.3d.hdf5"  # Data file location
+# Loading dataset
+ts = yt.load(data_location)
+
 # Choose what fields you want to plot
 variable_names = ["rho", "K", "Pi"]
-
 # Choose the center of the plot
 # "c" ... center of the box
 # "max" ... maximum of the plotted field
 # ("max",field) ... maximum of differnt field
 # [x,y,z] ... custom center
-center =  "c"  #[0,256,256]
+center =  "c"
+# Example for symmetric boundary condtions
+#center = get_center(ts)
+#center[0] = 0
 
 # Width of the plot (In simulation units)
 width = 90
@@ -37,8 +53,6 @@ if yt.is_root():
     for name in variable_names:
         if not os.path.exists(name):
             os.mkdir(name)
-# Loading dataset
-ts = yt.load(data_location)
 
 # Define a basic plot
 def produce_slice_plot(data, variable, axis = axis):
@@ -76,8 +90,6 @@ if hasattr(ts,'piter'):
             produce_slice_plot(i, name)
 else:
 # CASE FOR SINGLE DATASET (NOT PARALLEL)
-    comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()
-    if rank == 0:
+    if yt.is_root():
         for name in variable_names:
             produce_slice_plot(ts, name)
