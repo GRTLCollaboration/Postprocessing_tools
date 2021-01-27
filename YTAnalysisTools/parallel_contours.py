@@ -6,6 +6,7 @@
 import yt
 import numpy as np
 import time
+import matplotlib.pyplot as plt
 
 from matplotlib import rcParams
 from scipy.special import sph_harm
@@ -114,7 +115,7 @@ rcParams["axes.formatter.limits"] = [-3, 3]
 # CHANGE ME
 # Loading dataset (Load from one folder up)
 data_location = "../../*hdf5"  # Data file location
-
+data_location = "../../BosonStar_p_00100[12].3d.hdf5"
 # Loading dataset
 ts = yt.load(data_location)
 
@@ -125,39 +126,70 @@ center = np.array( ts[0].domain_right_edge / 2.0)
 # in parallel through processing
 storage = {}
 
-c00  = []
-c10  = []
-c11  = []
-c1n1 = []
-c20  = []
-c21  = []
-c22  = []
-c2n1 = []
-c2n2 = []
-
-for i in ts:
+for sto, i in ts.piter(storage=storage):
     dd = i.sphere("c",50)
     max_rho = dd.max("rho")
     surfaces = i.surface(dd,"rho",max_rho*0.1)
     tris = np.array(surfaces.triangles)
-    c00.append(spherical_harmonic_component(tris,center,0,0))
-    c10.append(spherical_harmonic_component(tris,center,1,0))
-    c11.append(spherical_harmonic_component(tris,center,1,1))
-    c1n1.append(spherical_harmonic_component(tris,center,1,-1))
-    c20.append(spherical_harmonic_component(tris,center,2,0))
-    c21.append(spherical_harmonic_component(tris,center,2,1))
-    c22.append(spherical_harmonic_component(tris,center,2,2))
-    c2n1.append(spherical_harmonic_component(tris,center,2,-1))
-    c2n2.append(spherical_harmonic_component(tris,center,2,-2))
+    dict = {'t':i.current_time}
+    dict['c00'] =  spherical_harmonic_component(tris,center,0,0)
+    dict['c10'] =  spherical_harmonic_component(tris,center,1,0)
+    dict['c11'] =  spherical_harmonic_component(tris,center,1,1)
+    dict['c1n1'] =  spherical_harmonic_component(tris,center,1,-1)
+    dict['c20'] =  spherical_harmonic_component(tris,center,2,0)
+    dict['c21'] =  spherical_harmonic_component(tris,center,2,1)
+    dict['c22'] =  spherical_harmonic_component(tris,center,2,2)
+    dict['c2n1'] =  spherical_harmonic_component(tris,center,2,-1)
+    dict['c2n2'] =  spherical_harmonic_component(tris,center,2,-2)
+    print(dict['c00'])
+    sto.result = dict
+    sto.result_id = str(i)
 
-    if yt.is_root():
-        np.savetxt("c00.dat",c00)
-        np.savetxt("c10.dat",c10)
-        np.savetxt("c11.dat",c11)
-        np.savetxt("c1n1.dat",c1n1)
-        np.savetxt("c20.dat",c20)
-        np.savetxt("c21.dat",c21)
-        np.savetxt("c22.dat",c22)
-        np.savetxt("c2n1.dat",c2n1)
-        np.savetxt("c2n2.dat",c2n2)
+if yt.is_root():
+    time = []
+    c00  = []
+    c10  = []
+    c11  = []
+    c1n1 = []
+    c20  = []
+    c21  = []
+    c22  = []
+    c2n1 = []
+    c2n2 = []
+
+    for L in sorted(storage.items()):
+        time.append(L[1]['t'])
+        c00.append(L[1]['c00'])
+        c10.append(L[1]['c10'])
+        c11.append(L[1]['c11'])
+        c1n1.append(L[1]['c1n1'])
+        c20.append(L[1]['c20'])
+        c21.append(L[1]['c21'])
+        c22.append(L[1]['c22'])
+        c2n1.append(L[1]['c2n1'])
+        c2n2.append(L[1]['c2n2'])
+
+    plt.plot(time,np.abs(c00),label = "c00")
+    plt.plot(time,np.abs(c10),label = "c10")
+    plt.plot(time,np.abs(c11),label = "c11")
+    plt.plot(time,np.abs(c1n1),label = "c1n1")
+    plt.plot(time,np.abs(c20),label = "c20")
+    plt.plot(time,np.abs(c21),label = "c21")
+    plt.plot(time,np.abs(c22),label = "c22")
+    plt.plot(time,np.abs(c2n1),label = "c2n1")
+    plt.plot(time,np.abs(c2n2),label = "c2n2")
+    plt.legend()
+    plt.yscale("log")
+    plt.savefig("overview.png")
+
+    np.savetxt("time.dat",time)
+    np.savetxt("c00.dat",c00)
+    np.savetxt("c10.dat",c10)
+    np.savetxt("c11.dat",c11)
+    np.savetxt("c1n1.dat",c1n1)
+    np.savetxt("c20.dat",c20)
+    np.savetxt("c21.dat",c21)
+    np.savetxt("c22.dat",c22)
+    np.savetxt("c2n1.dat",c2n1)
+    np.savetxt("c2n2.dat",c2n2)
 
