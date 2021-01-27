@@ -6,7 +6,6 @@
 import yt
 import numpy as np
 import time
-import pickle
 
 from matplotlib import rcParams
 from scipy.special import sph_harm
