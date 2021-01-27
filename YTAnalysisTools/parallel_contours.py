@@ -7,31 +7,113 @@ import yt
 import numpy as np
 import time
 import matplotlib
+import pickle
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import rcParams
 from scipy.special import sph_harm
-
+from sys import exit
 
 def cart2sph(x, y, z):
+    #   Function that takes cartesian coords and gives back cartesian coords
+    #   input:  x,y,z ... out put cartesian coords
+    #   output: az ... numpy array with phi
+    #           el ... numpy array with theta
+    #           r ... numpy array with r
     hxy = np.hypot(x, y)
     r = np.hypot(hxy, z)
-    el = np.arctan2(z, hxy)
+    el = np.arccos(z/r)
     az = np.arctan2(y, x)
     return az, el, r
 
 def sph2cart(az, el, r):
-    rcos_theta = r * np.cos(el)
+    #   Function that takes spherical coords and gives back cartesian coords
+    #   input: az ... numpy array with phi
+    #          el ... numpy array with theta
+    #           r ... numpy array with r
+    #   return: x,y,z ... out put cartesian coords
+    rcos_theta = r * np.sin(el)
     x = rcos_theta * np.cos(az)
     y = rcos_theta * np.sin(az)
-    z = r * np.sin(el)
+    z = r * np.cos(el)
     return x, y, z
 
-def get_Spheroidal_coef(az,el,r):
+def test_coords():
+    # Small function to test that sph2cart and cart2sph are the inverse of each other.
+    # Writes in some random coordiantes and applies both operations
+    x_test = (np.random.rand(3,100)-0.5)*10
+    az,el,r = cart2sph(x_test[0],x_test[1],x_test[2])
+    x,y,z = sph2cart(az,el,r)
+    summ = 0
+    summ+=np.sum(x-x_test[0])
+    summ+=np.sum(y-x_test[1])
+    summ+=np.sum(z-x_test[2])
+    if np.abs(summ) <  1e-14:
+        return 0
+    else:
+        print("Coordinates are all fucked up")
+        return 1
 
 
+def spherical_harmonic_component(tris,center = [0,0,0],l = 2,m = 0):
+    #   Function to decompose radius in spherical harmonic components
+    #   input:  tris ... numpy array with coordiantes of triangles ( shape = (n,3,3))
+    #           center ... numpy array with center
+    #           l ... positive integer
+    #           m ... integer, must fufill |m| < l
+    #   return: _spherical_component ... complex number with sph harm component
+
+    assert(np.abs(m)<=l)
+
+    x = tris[:,0,0].flatten()-center[0]
+    y = tris[:,0,1].flatten()-center[1]
+    z = tris[:,0,2].flatten()-center[2]
+    az, el, r = cart2sph(x,y,z)
+
+    # Get normalised surface
+    big_center = [center,center,center]
+    for i in range(tris.shape[0]):
+        tris[i,:,:] = (tris[i,:,:]-big_center)
+        for j in range(3):
+            x1 = tris[i,j,0]
+            y1 = tris[i,j,1]
+            z1 = tris[i,j,2]
+            r = np.sqrt(x1*x1+y1*y1+z1*z1)
+            tris[i,j,:] *= 1/r
+
+    # Calculate the area elements
+    x = tris[:, 1, :] - tris[:, 0, :]
+    y = tris[:, 2, :] - tris[:, 0, :]
+    areas = (x[:, 1]*y[:, 2] - x[:, 2]*y[:, 1])**2
+    np.add(areas, (x[:, 2]*y[:, 0] - x[:, 0]*y[:, 2])**2, out=areas)
+    np.add(areas, (x[:, 0]*y[:, 1] - x[:, 1]*y[:, 0])**2, out=areas)
+    np.sqrt(areas, out=areas)
+
+    # Function shape to be integrated over
+    #f = sph_harm(m,l,az,el)*np.conjugate( sph_harm(m,l,az,el) )
+    f = r*np.conjugate( sph_harm(m,l,az,el) )
+
+    areas = areas * f
+    _spherical_components = 0.5*areas.sum()
+    return _spherical_components
+
+
+
+center = [1024,1024,1024]
+
+pkl_file = open('data.pkl', 'rb')
+data1 = pickle.load(pkl_file)
+tris = np.array(data1)
+
+area = spherical_harmonic_component(tris,center,2,2)
+print(area)
+
+#fig = plt.figure()
+#ax = fig.add_subplot(111, projection='3d')
+#ax.scatter(x,y,z)
+#plt.savefig("fig.png")
 
 
 # Timings
@@ -56,43 +138,45 @@ data_location = "../../*hdf5"  # Data file location
 ts = yt.load(data_location)
 
 # Program Parameters
-center = ts[0].domain_right_edge / 2.0
+center = np.array( ts[0].domain_right_edge / 2.0)
 
 # Define an empty storage dictionary for collecting information
 # in parallel through processing
 storage = {}
 
+c00  = []
+c10  = []
+c11  = []
+c1n1 = []
+c20  = []
+c21  = []
+c22  = []
+c2n1 = []
+c2n2 = []
+
 for i in ts:
-    i.periodicity = (True, True, True)
-    #ad = i.all_data()
-    #max_loc =  ad.quantities.max_location("rho")[1:]
     dd = i.sphere("c",50)
     max_rho = dd.max("rho")
     surfaces = i.surface(dd,"rho",max_rho*0.1)
-    size = surfaces.triangles.shape
-    points = surfaces.triangles.reshape((size[0]*size[1],size[2]))
+    tris = np.array(surfaces.triangles)
+    c00.append(spherical_harmonic_component(tris,center,0,0))
+    c10.append(spherical_harmonic_component(tris,center,1,0))
+    c11.append(spherical_harmonic_component(tris,center,1,1))
+    c1n1.append(spherical_harmonic_component(tris,center,1,-1))
+    c20.append(spherical_harmonic_component(tris,center,2,0))
+    c21.append(spherical_harmonic_component(tris,center,2,1))
+    c22.append(spherical_harmonic_component(tris,center,2,2))
+    c2n1.append(spherical_harmonic_component(tris,center,2,-1))
+    c2n2.append(spherical_harmonic_component(tris,center,2,-2))
 
-    x = np.array(points[:,0]-center[0])
-    z = np.array(points[:,1]-center[1])
-    y = np.array(points[:,2]-center[2])
+    if yt.is_root():
+        np.savetxt("c00.dat",c00)
+        np.savetxt("c10.dat",c10)
+        np.savetxt("c11.dat",c11)
+        np.savetxt("c1n1.dat",c1n1)
+        np.savetxt("c20.dat",c20)
+        np.savetxt("c21.dat",c21)
+        np.savetxt("c22.dat",c22)
+        np.savetxt("c2n1.dat",c2n1)
+        np.savetxt("c2n2.dat",c2n2)
 
-    az, el, r = cart2sph(x,y,z)
-
-
-
-if yt.is_root():
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-
-    # defining axes
-    x = np.array(points[:,0]-center[0])
-    z = np.array(points[:,1]-center[1])
-    y = np.array(points[:,2]-center[2])
-    ax.scatter(x,y,z)
-
-    az, el, r = cart2sph(x,y,z)
-    print(r)
-    # syntax for plotting
-    ax.set_title('3d Scatter plot geeks for geeks')
-    plt.savefig("fig.png")
