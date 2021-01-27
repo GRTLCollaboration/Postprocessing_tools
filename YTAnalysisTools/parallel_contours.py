@@ -6,15 +6,10 @@
 import yt
 import numpy as np
 import time
-import matplotlib
 import pickle
 
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import rcParams
 from scipy.special import sph_harm
-from sys import exit
 
 def cart2sph(x, y, z):
     #   Function that takes cartesian coords and gives back cartesian coords
