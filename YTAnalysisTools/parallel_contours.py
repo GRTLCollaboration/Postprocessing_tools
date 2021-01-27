@@ -98,19 +98,6 @@ def spherical_harmonic_component(tris,center = [0,0,0],l = 2,m = 0):
 
 center = [1024,1024,1024]
 
-pkl_file = open('data.pkl', 'rb')
-data1 = pickle.load(pkl_file)
-tris = np.array(data1)
-
-area = spherical_harmonic_component(tris,center,2,2)
-print(area)
-
-#fig = plt.figure()
-#ax = fig.add_subplot(111, projection='3d')
-#ax.scatter(x,y,z)
-#plt.savefig("fig.png")
-
-
 # Timings
 start_time = time.time()
 
