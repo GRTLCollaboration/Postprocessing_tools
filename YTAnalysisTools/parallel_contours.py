@@ -102,7 +102,7 @@ center = [1024,1024,1024]
 start_time = time.time()
 
 # Enable Parallelism
-#yt.enable_parallelism()
+yt.enable_parallelism()
 
 # Plot parameters
 line = 2.5  # Line width
