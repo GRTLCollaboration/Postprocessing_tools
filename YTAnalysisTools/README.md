@@ -26,3 +26,23 @@ Decomposition of Psi4 into spin weighted spherical harmonics. This is largely ba
 Script to calculate radius of an axion star. See the appendix of this [paper](https://arxiv.org/abs/1806.09367) for more information.
 
 ## spherical_horizon_finder.py
+
+
+# Tips & Tricks 
+
+In some cluster ffmpeg is not available, to still be able to use this run the following commands 
+```
+  wget https://www.johnvansickle.com/ffmpeg/old-releases/ffmpeg-4.0.3-32bit-static.tar.xz
+  tar xJfv ffmpeg-4.0.3-32bit-static.tar.xz
+```
+to be able to call the ffmpeg normally open .bashrc file using an editor 
+```
+  cd 
+  vi .bashrc
+```
+and add the line 
+
+  alias ffmpeg="<PATH_TO_FFMPEG_FOLDER>/ffmpeg-4.0.3-32bit-static/ffmpeg"
+  
+and you should be able to use ffmpeg as before 
+  
