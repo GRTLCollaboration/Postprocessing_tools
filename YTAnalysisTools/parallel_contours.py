@@ -65,25 +65,28 @@ def spherical_harmonic_component(tris,center = [0,0,0],l = 2,m = 0):
 
     assert(np.abs(m)<=l)
 
-    x = tris[:,0,0].flatten()-center[0]
-    y = tris[:,0,1].flatten()-center[1]
-    z = tris[:,0,2].flatten()-center[2]
+    # Python does not create copy of mutable objects, we force python to copy array
+    tris_local = tris.copy()
+
+    x = tris_local[:,0,0].flatten()-center[0]
+    y = tris_local[:,0,1].flatten()-center[1]
+    z = tris_local[:,0,2].flatten()-center[2]
     az, el, r = cart2sph(x,y,z)
 
     # Get normalised surface
     big_center = [center,center,center]
-    for i in range(tris.shape[0]):
-        tris[i,:,:] = (tris[i,:,:]-big_center)
+    for i in range(tris_local.shape[0]):
+        tris_local[i,:,:] = (tris_local[i,:,:]-big_center)
         for j in range(3):
-            x1 = tris[i,j,0]
-            y1 = tris[i,j,1]
-            z1 = tris[i,j,2]
+            x1 = tris_local[i,j,0]
+            y1 = tris_local[i,j,1]
+            z1 = tris_local[i,j,2]
             r = np.sqrt(x1*x1+y1*y1+z1*z1)
-            tris[i,j,:] *= 1/r
+            tris_local[i,j,:] *= 1/r
 
     # Calculate the area elements
-    x = tris[:, 1, :] - tris[:, 0, :]
-    y = tris[:, 2, :] - tris[:, 0, :]
+    x = tris_local[:, 1, :] - tris_local[:, 0, :]
+    y = tris_local[:, 2, :] - tris_local[:, 0, :]
     areas = (x[:, 1]*y[:, 2] - x[:, 2]*y[:, 1])**2
     np.add(areas, (x[:, 2]*y[:, 0] - x[:, 0]*y[:, 2])**2, out=areas)
     np.add(areas, (x[:, 0]*y[:, 1] - x[:, 1]*y[:, 0])**2, out=areas)
@@ -95,6 +98,10 @@ def spherical_harmonic_component(tris,center = [0,0,0],l = 2,m = 0):
 
     areas = areas * f
     _spherical_components = 0.5*areas.sum()
+
+    # Just to make sure in case python doesnt clean up
+    del tris_local
+
     return _spherical_components
 
 
