@@ -8,6 +8,9 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 
+import matplotlib
+matplotlib.use("Agg")
+
 from matplotlib import rcParams
 from scipy.special import sph_harm
 
@@ -183,13 +186,13 @@ if yt.is_root():
     plt.savefig("overview.png")
 
     np.savetxt("time.dat",time)
-    np.savetxt("c00.dat",c00)
-    np.savetxt("c10.dat",c10)
-    np.savetxt("c11.dat",c11)
-    np.savetxt("c1n1.dat",c1n1)
-    np.savetxt("c20.dat",c20)
-    np.savetxt("c21.dat",c21)
-    np.savetxt("c22.dat",c22)
-    np.savetxt("c2n1.dat",c2n1)
-    np.savetxt("c2n2.dat",c2n2)
+    np.savetxt("c00.dat",np.real(c00))
+    np.savetxt("c10.dat",np.real(c10))
+    np.savetxt("c11.dat",np.real(c11))
+    np.savetxt("c1n1.dat",np.real(c1n1))
+    np.savetxt("c20.dat",np.real(c20))
+    np.savetxt("c21.dat",np.real(c21))
+    np.savetxt("c22.dat",np.real(c22))
+    np.savetxt("c2n1.dat",np.real(c2n1))
+    np.savetxt("c2n2.dat",np.real(c2n2))
 
