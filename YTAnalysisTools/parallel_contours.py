@@ -67,11 +67,10 @@ def spherical_harmonic_component(tris,center = [0,0,0],l = 2,m = 0):
 
     # Python does not create copy of mutable objects, we force python to copy array
     tris_local = tris.copy()
-
-    x = tris_local[:,0,0].flatten()-center[0]
-    y = tris_local[:,0,1].flatten()-center[1]
-    z = tris_local[:,0,2].flatten()-center[2]
-    az, el, r = cart2sph(x,y,z)
+    x = (tris_local[:,0,0].flatten()+tris_local[:,1,0].flatten()+tris_local[:,2,0].flatten())/3. -center[0]
+    y = (tris_local[:,0,1].flatten()+tris_local[:,1,1].flatten()+tris_local[:,2,1].flatten())/3. -center[1]
+    z = (tris_local[:,0,2].flatten()+tris_local[:,1,2].flatten()+tris_local[:,2,2].flatten())/3. -center[2]
+    az, el, rad = cart2sph(x,y,z)
 
     # Get normalised surface
     big_center = [center,center,center]
@@ -85,18 +84,18 @@ def spherical_harmonic_component(tris,center = [0,0,0],l = 2,m = 0):
             tris_local[i,j,:] *= 1/r
 
     # Calculate the area elements
-    x = tris_local[:, 1, :] - tris_local[:, 0, :]
-    y = tris_local[:, 2, :] - tris_local[:, 0, :]
-    areas = (x[:, 1]*y[:, 2] - x[:, 2]*y[:, 1])**2
-    np.add(areas, (x[:, 2]*y[:, 0] - x[:, 0]*y[:, 2])**2, out=areas)
-    np.add(areas, (x[:, 0]*y[:, 1] - x[:, 1]*y[:, 0])**2, out=areas)
+    x_ = tris_local[:, 1, :] - tris_local[:, 0, :]
+    y_ = tris_local[:, 2, :] - tris_local[:, 0, :]
+    areas = (x_[:, 1]*y_[:, 2] - x_[:, 2]*y_[:, 1])**2
+    np.add(areas, (x_[:, 2]*y_[:, 0] - x_[:, 0]*y_[:, 2])**2, out=areas)
+    np.add(areas, (x_[:, 0]*y_[:, 1] - x_[:, 1]*y_[:, 0])**2, out=areas)
     np.sqrt(areas, out=areas)
 
     # Function shape to be integrated over
-    #f = sph_harm(m,l,az,el)*np.conjugate( sph_harm(m,l,az,el) )
-    f = r*np.conjugate( sph_harm(m,l,az,el) )
+    f = rad*np.conjugate( sph_harm(m,l,az,el) )
+    #g = np.conjugate( sph_harm(m,l,az,el) )*(sph_harm(0,0,az,el) + 22.222*sph_harm(2,2,az,el) - sph_harm(-1,1,az,el) + 17.07*sph_harm(1,1,az,el) ) //test function
 
-    areas = areas * f
+    areas = areas * f 
     _spherical_components = 0.5*areas.sum()
 
     # Just to make sure in case python doesnt clean up
@@ -124,8 +123,9 @@ rcParams["axes.formatter.limits"] = [-3, 3]
 
 # CHANGE ME
 # Loading dataset (Load from one folder up)
-data_location = "../../*hdf5"  # Data file location
-data_location = "../../BosonStar_p_00100[12].3d.hdf5"
+#data_location = "../../../barhunt/good_simulation/plt/*hdf5"  # Data file location
+#data_location = "../../../barhunt/good_simulation/plt/*003000*.3d.hdf5"
+data_location = "*.3d.hdf5"
 # Loading dataset
 ts = yt.load(data_location)
 
@@ -151,7 +151,15 @@ for sto, i in ts.piter(storage=storage):
     dict['c22'] =  spherical_harmonic_component(tris,center,2,2)
     dict['c2n1'] =  spherical_harmonic_component(tris,center,2,-1)
     dict['c2n2'] =  spherical_harmonic_component(tris,center,2,-2)
-    print(dict['c00'])
+    print("Y00", dict['c00'])
+    print("Y10", dict['c10'])
+    print("Y11", dict['c11'])
+    print("Y1n1", dict['c1n1'])
+    print("Y20", dict['c20'])
+    print("Y21", dict['c21'])
+    print("Y22", dict['c22'])
+    print("Y2n1", dict['c2n1'])
+    print("Y2n2", dict['c2n2'])
     sto.result = dict
     sto.result_id = str(i)
 
@@ -193,13 +201,12 @@ if yt.is_root():
     plt.savefig("overview.png")
 
     np.savetxt("time.dat",time)
-    np.savetxt("c00.dat",np.real(c00))
-    np.savetxt("c10.dat",np.real(c10))
-    np.savetxt("c11.dat",np.real(c11))
-    np.savetxt("c1n1.dat",np.real(c1n1))
-    np.savetxt("c20.dat",np.real(c20))
-    np.savetxt("c21.dat",np.real(c21))
-    np.savetxt("c22.dat",np.real(c22))
-    np.savetxt("c2n1.dat",np.real(c2n1))
-    np.savetxt("c2n2.dat",np.real(c2n2))
-
+    np.savetxt("c00.dat",np.abs(c00))
+    np.savetxt("c10.dat",np.abs(c10))
+    np.savetxt("c11.dat",np.abs(c11))
+    np.savetxt("c1n1.dat",np.abs(c1n1))
+    np.savetxt("c20.dat",np.abs(c20))
+    np.savetxt("c21.dat",np.abs(c21))
+    np.savetxt("c22.dat",np.abs(c22))
+    np.savetxt("c2n1.dat",np.abs(c2n1))
+    np.savetxt("c2n2.dat",np.abs(c2n2))
