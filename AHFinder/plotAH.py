@@ -20,7 +20,7 @@ import math #exp
 # expected files "coords_AH1_%06d.dat" and "stats_AH1.dat" and same for "AH2" and "AH3" in mergers
 
 location = "./"
-center = [512., 512., 0.]
+center = [16., 16., 0.]
 
 scale_mult = 0.0 # add ratio margin to plots
 scale_add  = 0.0 # add margin to plots
@@ -37,7 +37,7 @@ if len(sys.argv)>1:
         location += '/'
     print('Location set to: ',location)
 
-num_AH = len(glob.glob("stats_*.dat"))
+num_AH = len(glob.glob(location + "stats_*.dat"))
 
 files  = [[]]*num_AH 
 times  = files[:]
@@ -50,10 +50,17 @@ o_z	   = files[:]
 c_x	   = files[:]
 c_y	   = files[:]
 c_z	   = files[:]
+hasSpin = True
+hasCenter = True
 
 def readStats():
 
 	for h in range(0, num_AH):
+
+		# get headers
+		file = open(location + ("stats_AH%d.dat" % (h+1)), 'r')
+		headers = file.readline()
+		file.close()
 
 		stats = np.loadtxt(location + ("stats_AH%d.dat" % (h+1)))
 		ncols = np.size(stats,1)
@@ -61,18 +68,23 @@ def readStats():
 		times[h] = stats[:,0]
 		files[h] = stats[:,1]
 		areas[h] = stats[:,2]
-		spins[h] = stats[:,3]
-		masses[h] = stats[:,4]
 
-		o_x[h] = stats[:,5]
-		o_y[h] = stats[:,6]
-		o_z[h] = stats[:,7]
+		hasSpin = ('spin' in headers)
+		if hasSpin:
+			spins[h] = stats[:,5]
+		masses[h] = stats[:,3]
 
-		if ncols>8:
-			c_x[h] = stats[:,8]
-			c_y[h] = stats[:,9]
-			c_z[h] = stats[:,10]
-		else
+		o_x[h] = stats[:,5 + 5 * hasSpin]
+		o_y[h] = stats[:,6 + 5 * hasSpin]
+		o_z[h] = stats[:,7 + 5 * hasSpin]
+
+		hasCenter = ('center' in headers)
+
+		if hasCenter:
+			c_x[h] = stats[:, 8 + 5 * hasSpin]
+			c_y[h] = stats[:, 9 + 5 * hasSpin]
+			c_z[h] = stats[:,10 + 5 * hasSpin]
+		else:
 			c_x[h] = o_x[h][:]
 			c_y[h] = o_y[h][:]
 			c_z[h] = o_z[h][:]
@@ -83,7 +95,7 @@ def plotAH():
 	active = [True]*num_AH # active = moving forward in 'stats' file
 	step = 0
 
-	mini = c-x[0][0] - center[0]
+	mini = c_x[0][0] - center[0]
 	maxi = mini
 
 	while(True):
@@ -219,4 +231,4 @@ def plotSpins():
 readStats()
 plotAreas()
 plotSpins()
-# plotAH()
+plotAH()
