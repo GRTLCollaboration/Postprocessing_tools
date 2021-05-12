@@ -25,3 +25,7 @@ time.table.*
 ipo_out.optrpt
 
 Doxygen/html
+
+*.dat
+*.png
+*.mp4
