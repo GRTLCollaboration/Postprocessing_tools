@@ -17,9 +17,9 @@ with data as csvfile:
         for row in filereader:
             if int(row[0]) == i:
                 '''Can input max time'''
-#                if float(row[1]) < 300:
-                    timelist.append(float(row[1]))
-                    totalboxlist.append(int(row[3]))
+ #              if float(row[1]) < 300:
+                timelist.append(float(row[1]))
+                totalboxlist.append(int(row[3]))
 
         plt.plot(timelist, totalboxlist, label='%s' % i)
         plt.legend()
