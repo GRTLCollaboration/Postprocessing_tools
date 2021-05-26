@@ -2,6 +2,9 @@ import yt
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import AxesGrid
 
+
+# ------------------- row 1 ---------------------
+
 fns = ['/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu005_v05_000050.3d.hdf5',
        '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu005_v05_000300.3d.hdf5',
        '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu005_v05_001300.3d.hdf5']
@@ -39,7 +42,7 @@ min_rho = 2.5e-5
 # shared narrow colorbar on the right hand side of the multipanel plot. Axes
 # labels are drawn for all plots since we're slicing along different directions
 # for each plot.
-grid = AxesGrid(fig, (0.2,0.075,0.7,1.6),
+grid = AxesGrid(fig, (0.175,0.075,0.69,1.58),
                 nrows_ncols = (1, 3),
                 axes_pad = 0.00,
                 label_mode = "L",
@@ -78,6 +81,7 @@ for i, fn in enumerate(fns):
     # Finally, this actually redraws the plot.
     p._setup_plots()
 
+# ------------------- row 2 ---------------------
 
 fns = ['/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu05_v05_000150.3d.hdf5',
        '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu05_v05_000800.3d.hdf5',
@@ -102,7 +106,7 @@ min_rho = 2.5e-3
 # shared narrow colorbar on the right hand side of the multipanel plot. Axes
 # labels are drawn for all plots since we're slicing along different directions
 # for each plot.
-grid = AxesGrid(fig, (0.2,0.075,0.7,0.95),
+grid = AxesGrid(fig, (0.175,0.075,0.69,0.94),
                 nrows_ncols = (1, 3),
                 axes_pad = 0.00,
                 label_mode = "L",
@@ -140,6 +144,8 @@ for i, fn in enumerate(fns):
 
     # Finally, this actually redraws the plot.
     p._setup_plots()
+
+# ------------------- row 3 ---------------------
 
 
 fns = ['/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu1_v05_000100.3d.hdf5',
@@ -165,7 +171,7 @@ min_rho = 2e-2
 # shared narrow colorbar on the right hand side of the multipanel plot. Axes
 # labels are drawn for all plots since we're slicing along different directions
 # for each plot.
-grid = AxesGrid(fig, (0.2,0.075,0.7,0.3),
+grid = AxesGrid(fig, (0.175,0.075,0.69,0.3),
                 nrows_ncols = (1, 3),
                 axes_pad = 0.00,
                 label_mode = "L",
