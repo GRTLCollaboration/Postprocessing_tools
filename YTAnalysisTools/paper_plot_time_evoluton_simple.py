@@ -1,6 +1,7 @@
 import yt
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import AxesGrid
+import numpy as np
 
 
 # ------------------- row 1 ---------------------
@@ -31,7 +32,7 @@ def get_center(ds):
 figure_size = (10, 10)
 fig = plt.figure(figsize=figure_size)
 
-variable = 'rho'
+variable = 'rho_norm'
 
 center =  "c"
 # Example for symmetric boundary conditions
@@ -48,8 +49,8 @@ for i, fn in enumerate(fns):
     center[2] = 0
     center_array.append(center)
 
-max_rho = 1e-1
-min_rho = 1e-5
+max_rho = 15
+min_rho = 0.5
 
 max_rho_c = [8e-5  , 8e-5  , 8e-5,
              1e-2  , 1e-2  , 1e-2,
@@ -58,6 +59,8 @@ max_rho_c = [8e-5  , 8e-5  , 8e-5,
 min_rho_c = [2.5e-5 , 2.5e-5 , 2.5e-5,
              2.5e-3 , 2.5e-3 , 2.5e-3,
              1e-2   , 1e-2   , 1e-2   ]
+
+
 
 # See http://matplotlib.org/mpl_toolkits/axes_grid/api/axes_grid_api.html
 # These choices of keyword arguments produce a four panel plot with a single
@@ -74,26 +77,37 @@ grid = AxesGrid(fig, (0.175,0.075,0.7,0.9),
                 cbar_size="3%",
                 cbar_pad="0%")
 
+_max_rho = 0
 
 for i, fn in enumerate(fns):
     # Load the data and create a single plot
     ds = yt.load(fn) # load data
+
+    if(i%3==0):
+        point = np.array(ds.domain_right_edge)*0.99
+        c = ds.r[point]
+        _max_rho = float(c['rho'][0])
+
+    def _rho_norm(field, data):
+        return data["rho"]/_max_rho
+    ds.add_field("rho_norm", _rho_norm, units="")
+
+       
     p = yt.SlicePlot(ds, 'z', variable, center = center_array[i], width=width[i])
 
     # Ensure the colorbar limits match for all plots
-    #p.set_zlim(variable, max_rho, min_rho)
+    p.set_zlim(variable, max_rho, min_rho)
     p.set_buff_size(2048)
 
     #p.annotate_grids()
     # Plot contours (uncomment next line to activate)
-    #p.annotate_contour(variable, ncont=3,take_log=True,clim = (min_rho_c[i], max_rho_c[i]))
+    #p.annotate_contour(variable, ncont=6,take_log=True,clim = (min_rho, max_rho))
 
-    p.set_cmap(field=variable, cmap="turbo")
-    p.set_xlabel(r"")
+    p.set_cmap(field=variable, cmap="jet")
+    p.set_xlabel(r"$x\left[m^{-1}\right]$")
     p.set_ylabel(r"$y\left[m^{-1}\right]$")
-    p.set_colorbar_label(variable, r'$\rho$')
+    p.set_colorbar_label(variable, r'$\rho/\rho_{asymptotic}$')
     p.set_window_size(10)
-
 
 
     # This forces the ProjectionPlot to redraw itself on the AxesGrid axes.
