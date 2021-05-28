@@ -4,6 +4,8 @@ import numpy as np
 from yt.visualization.base_plot_types import get_multi_plot
 from matplotlib.colors import LogNorm
 from matplotlib.backends.backend_agg import FigureCanvasAgg
+from mpl_toolkits.axes_grid1.anchored_artists import AnchoredSizeBar
+import matplotlib.font_manager as fm
 import matplotlib.figure
 import matplotlib.ticker as ticker
 
@@ -64,7 +66,7 @@ min_rho = [0.4  , 0.4  , 0.4 ,
 #   Number of plots on the x-axis, number of plots on the y-axis, and how we
 #   want our colorbars oriented.  (This governs where they will go, too.
 #   bw is the base-width in inches, but 4 is about right for most cases.
-dpi = 700.
+dpi = 700
 Res = 8192
 bw = 4 
 nx = 3
@@ -128,17 +130,36 @@ for i, fn in enumerate(fns):
     time = ds.current_time
     slc_dens = slc_dens/_max_rho
 
+    # Plots 
     plt_tmp = dens_axes[i].imshow(slc_dens, origin='lower', norm=LogNorm(),extent = [0,width[i],0,width[i]] )
 
+    # Set label boxes 
     dens_axes[i].text(width[i]*0.1, width[i]*0.9, label[i] + str(int(time)) + " M ", bbox={'facecolor': 'white', 'pad': 2.5})
 
+
+    # deactivate ticks 
     dens_axes[i].yaxis.set_visible(False)
     dens_axes[i].xaxis.set_visible(False)
+
+
 
     plt_tmp.set_cmap("jet")
     plt_tmp.set_clim((min_rho[i], max_rho[i]))
 
     plots.append(plt_tmp)
+
+    # Set scale bar 
+    if(i%3==0):
+        fontprops = fm.FontProperties(size=12)
+        scalebar = AnchoredSizeBar(dens_axes[i].transData,
+                           100, '100 M', 'lower right', 
+                           pad=0.3,
+                           color='white',
+                           frameon=False,
+                           size_vertical=1,
+                           fontproperties=fontprops)
+
+        dens_axes[i].add_artist(scalebar)
 
 # Set Colorbars 
 
@@ -149,8 +170,12 @@ for i, fn in enumerate(fns):
 cbar = fig.colorbar(plots[8], cax=cbars[0])
 cbar.set_label(r'$\rho/\rho_{asymptotic}$')
 formatter = ticker.FormatStrFormatter('%1.1f')
+
 cbar.set_ticks([0.5,1,2.5,5,12.5])
 cbar.ax.yaxis.set_major_formatter(formatter)
+text = cbar.ax.yaxis.label
+font = matplotlib.font_manager.FontProperties(size=12)
+text.set_font_properties(font)
 
 #colorbars[0].set_visible(False)
 #colorbars[2].set_visible(False)
