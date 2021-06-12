@@ -9,16 +9,6 @@ import matplotlib.font_manager as fm
 import matplotlib.figure
 import matplotlib.ticker as ticker
 
-fns = ['/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu005_v05_000050.3d.hdf5',
-       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu005_v05_000300.3d.hdf5',
-       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu005_v05_001300.3d.hdf5',
-       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu05_v05_000150.3d.hdf5',
-       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu05_v05_000800.3d.hdf5',
-       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu05_v05_006000.3d.hdf5',
-       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu1_v05_000100.3d.hdf5',
-       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu1_v05_001000.3d.hdf5',
-       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu1_v05_005000.3d.hdf5',
-       ]
 
 def get_center(ds):
     # Small function that gets center for both single
@@ -32,51 +22,62 @@ def get_center(ds):
         center = ds[0].domain_right_edge / 2.0
     return center
 
-fig = plt.figure()
+fns = ['/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu005_v05_000050.3d.hdf5',
+       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu005_v05_000300.3d.hdf5',
+       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu005_v05_001300.3d.hdf5',
+       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu05_v05_000150.3d.hdf5',
+       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu05_v05_000800.3d.hdf5',
+       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu05_v05_006000.3d.hdf5',
+       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu1_v05_000100.3d.hdf5',
+       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu1_v05_001000.3d.hdf5',
+       '/rds/user/dc-helf1/rds-dirac-dp131/dc-tray2/FixedBGRComplex/other_mus/mu1_v05_005000.3d.hdf5',
+       ]
+
+label = [r'$\mu = 0.05 $' ,r'$\mu = 0.05  $' ,r'$\mu = 0.05 $',
+         r'$\mu = 0.5 $'  ,r'$\mu = 0.5  $'  ,r'$\mu = 0.5 $' ,
+         r'$\mu = 1.0 $'  ,r'$\mu = 1.0  $'  ,r'$\mu = 1.0 $'
+        ]
 
 variable = 'rho'
 
-center =  "c"
-# Set the size of the box 
-width = [400,400,400,
-         400,400,400,
-         400,400,400]
+colorbar_label = r'$\rho\:\left[M_{pl}^2 m^2\right]$'
+
+# Set the size of the box
+width = 400
+# set max and min values
+max_val = 0.9999e-2
+min_val = 1.00001e-6
+
+# Reference Length scale
+scale_size = int(width/4.0)
+scale_unit = '$m^{-1}$ '
+
+log_plot = True
+
+N_ticks = 4
 
 center_array = []
 for i, fn in enumerate(fns):
     center = get_center(yt.load(fn))
-    center[1] = width[i]/2.
+    center[1] = width/2.
     center[2] = 0
     center_array.append(center)
 
-
-# set max and min values 
-max_rho = [15  , 15  , 15 ,
-           15  , 15  , 15 ,
-           15  , 15  , 15 ]
-
-min_rho = [0.4  , 0.4  , 0.4 ,
-           0.4  , 0.4  , 0.4 ,
-           0.4  , 0.4  , 0.4   ]
-
-# There's a lot in here:
-#   From this we get a containing figure, a list-of-lists of axes into which we
-#   can place plots, and some axes that we'll put colorbars.
-# We feed it:
-#   Number of plots on the x-axis, number of plots on the y-axis, and how we
-#   want our colorbars oriented.  (This governs where they will go, too.
-#   bw is the base-width in inches, but 4 is about right for most cases.
-dpi = 400
-Res = 8192
-bw = 4 
+# Figure properties
+dpi = 400/8
+Res = 8192/8
+bw = 4
 nx = 3
-ny = 3 
+ny = 3
+font_size = 16
+
+fig = plt.figure()
 cbar_padding = 0.4
 hf, wf = 1.0/ny, 1.0/nx
 fudge_x = nx/(cbar_padding+nx)
 fudge_y = 1.0
-plt.rcParams.update({'font.size':16})
-    
+plt.rcParams.update({'font.size':font_size})
+
 fig = matplotlib.figure.Figure((bw*nx/fudge_x, bw*ny/fudge_y), dpi=dpi)
 fig.set_canvas(FigureCanvasAgg(fig))
 fig.subplots_adjust(wspace=0.0, hspace=0.0,
@@ -92,50 +93,53 @@ for j in range(ny):
         axes[-1].append(ax)
 
 cbars = []
-ax = fig.add_axes([wf*(nx)*fudge_x, hf*fudge_y*(ny-(2+1.0)),
-                               wf*fudge_x*0.12, 3*hf*fudge_y])
+ax = fig.add_axes([wf*(nx)*fudge_x, 0,
+                               wf*fudge_x*0.12, ny*hf*fudge_y])
 ax.clear()
 cbars.append(ax)
 
-dens_axes = [axes[0][0], axes[0][1],axes[0][2], 
-             axes[1][0], axes[1][1],axes[1][2],
-             axes[2][0], axes[2][1],axes[2][2]
-             ]
+dens_axes = []
+for i in range(ny):
+    for j in range(nx):
+        dens_axes.append(axes[i][j])
+
 plots = []
 
-label = [r'$\mu = 0.05 \quad t = $' ,r'$\mu = 0.05 \quad t = $' ,r'$\mu = 0.05 \quad t = $',
-         r'$\mu = 0.5  \quad t = $' ,r'$\mu = 0.5 \quad t = $' ,r'$\mu = 0.5  \quad t = $' ,
-         r'$\mu = 1.0  \quad t = $' ,r'$\mu = 1.0 \quad t = $' ,r'$\mu = 1.0  \quad t = $',
-        ]
 
 for i, dax in enumerate(dens_axes):
     dax.xaxis.set_visible(False)
     dax.yaxis.set_visible(False)
     
 
-_max_rho = 0
+_max_val = 0
 for i, fn in enumerate(fns):
+    if (i > nx*ny-1):
+        break
     # Load the data and create a single plot
     ds = yt.load(fn) # load data
-    p = yt.SlicePlot(ds, 'z', variable, center = center_array[i], width=width[i])
+    p = yt.SlicePlot(ds, 'z', variable, center = center_array[i], width=width)
     p.set_buff_size(Res)
 
-    slc_frb = p.data_source.to_frb(width[i], Res)
+    slc_frb = p.data_source.to_frb(width, Res)
     slc_dens = np.array(slc_frb[variable])
 
-    if(i%3==0):
-        point = np.array(ds.domain_right_edge)*0.99
-        c = ds.r[point]
-        _max_rho = float(c['rho'][0])
-    
+#  Normalising maximum energy density with asymtotic value
+#    if(i%3==0):
+#        point = np.array(ds.domain_right_edge)*0.99
+#        c = ds.r[point]
+#        _max_val = float(c['rho'][0])
+#    slc_dens = slc_dens/_max_val
+
     time = ds.current_time
-    slc_dens = slc_dens/_max_rho
 
     # Plots 
-    plt_tmp = dens_axes[i].imshow(slc_dens, origin='lower', norm=LogNorm(),extent = [0,width[i],0,width[i]] )
+    if log_plot:
+        plt_tmp = dens_axes[i].imshow(slc_dens, origin='lower', norm=LogNorm(),extent = [0,width,0,width] )
+    else:
+        plt_tmp = dens_axes[i].imshow(slc_dens, origin='lower',extent = [0,width,0,width] )
 
     # Set label boxes 
-    dens_axes[i].text(width[i]*0.1, width[i]*0.9, label[i] + str(int(time)) + " M ", bbox={'facecolor': 'white', 'pad': 5})
+    dens_axes[i].text(width*0.1, width*0.9, label[i] +" t= " + str(int(time)) + " M ", bbox={'facecolor': 'white', 'pad': 5})
 
 
     # deactivate ticks 
@@ -144,15 +148,17 @@ for i, fn in enumerate(fns):
 
 
     plt_tmp.set_cmap("jet")
-    plt_tmp.set_clim((min_rho[i], max_rho[i]))
+    plt_tmp.set_clim((min_val, max_val))
 
     plots.append(plt_tmp)
 
-    # Set scale bar 
-    if(i%3==0):
+    # Set scale bar, only set for last plot
+    if(i==nx*ny-1):
         fontprops = fm.FontProperties()
         scalebar = AnchoredSizeBar(dens_axes[i].transData,
-                           100, '100 M', 'lower right', 
+                           scale_size,
+                           str(scale_size) + " " + scale_unit,
+                           'lower right',
                            pad=0.3,
                            color='white',
                            frameon=False,
@@ -163,21 +169,11 @@ for i, fn in enumerate(fns):
 
 # Set Colorbars 
 
-#for p, cax, t in zip(plots[1:9:3], colorbars, titles):
-#    cbar = fig.colorbar(p, cax=cax)
-#    cbar.set_label(t)
+cbar = fig.colorbar(plots[nx*ny-1], cax=cbars[0])
+cbar.set_label(colorbar_label)
 
-cbar = fig.colorbar(plots[8], cax=cbars[0])
-cbar.set_label(r'$\rho/\rho_{asymptotic}$')
-formatter = ticker.FormatStrFormatter('%1.1f')
-
-cbar.set_ticks([0.5,1,2.5,5,12.5])
-cbar.ax.yaxis.set_major_formatter(formatter)
 text = cbar.ax.yaxis.label
 font = matplotlib.font_manager.FontProperties()
 text.set_font_properties(font)
-
-#colorbars[0].set_visible(False)
-#colorbars[2].set_visible(False)
 
 fig.savefig('rho_plot_axes.png',dpi = dpi )
