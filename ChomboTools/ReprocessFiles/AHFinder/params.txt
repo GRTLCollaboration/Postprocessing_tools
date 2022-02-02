@@ -19,6 +19,12 @@ start_file = 0
 end_file = 10
 #num_files = 11
 
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+max_spatial_derivative_order = 4 # can be 4 or 6
+
 # For desired outputs, set plot interval to zero to turn off plot outputs
 plot_interval = 0
 plot_prefix = PlotFile
@@ -44,20 +50,19 @@ vars_parity            = 0 0 4 6 0 5 0    #chi and hij
                          0 1 2 3 1 2 3    #lapse shift and B
 vars_parity_diagnostic = 0 1 2 3          #Ham and Mom
 
-# if sommerfeld boundaries selected, must select 
-# asymptotic values (in order given by UserVariables.hpp)
-vars_asymptotic_values = 1.0 1.0 0.0 0.0 1.0 0.0 1.0 #chi and hij
-                         0.0 0.0 0.0 0.0 0.0 0.0 0.0 #K and Aij
-                         0.0 0.0 0.0 0.0             #Theta and Gamma
-                         1.0 0.0 0.0 0.0 0.0 0.0 0.0 #lapse shift and B
+# if sommerfeld boundaries selected, must select
+# asymptotic values
+num_nonzero_asymptotic_vars = 5
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
 
 #Apparent Horizon finder 
 AH_activate = 1
-AH_num_ranks = 2
-AH_num_points_u = 11
-AH_num_points_v = 20
-AH_solve_interval = 1
-AH_print_interval = 1
+AH_num_ranks = 20
+AH_num_points_u = 41
+AH_num_points_v = 40
+#AH_solve_interval = 1
+#AH_print_interval = 1
 #AH_track_center = true
 #AH_predict_origin = true
 #AH_merger_search_factor = 1. #-1 to deactivate
@@ -71,12 +76,15 @@ AH_verbose = 3
 
 AH_initial_guess = 0.5
 
-AH_num_write_vars = 2
-AH_write_vars = chi d1_chi
+AH_num_extra_vars = 2
+AH_extra_vars = chi d1_chi
+
+AH_coords_subpath = "data/coords"
 
 # From here it is mostly dummy params
 verbosity = 0
-regrid_interval = 0 0 0 0 0
+regrid_interval = 0 0 0 0 0 0 0 0 0 0 0
 max_grid_size = 16
 block_factor = 8
 dt_multiplier = 0.25 # needed if you want to use m_dt or m_time
+

@@ -19,13 +19,21 @@ start_file = 0
 #num_files = 6
 end_file = 10
 
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+max_spatial_derivative_order = 4 # can be 4 or 6
+
 # For desired outputs, set plot interval to zero to turn off plot outputs
 plot_interval = 0
 plot_prefix = PlotFile
 
+# Do you need to add any boundary params? E.g. with AHFinder yes you do
+
 # From here it is mostly dummy params
 verbosity = 0
-regrid_interval = 0 0 0 0 0
+regrid_interval = 0 0 0 0 0 0 0 0 0 0
 max_grid_size = 16
 block_factor = 8
 dt_multiplier = 0.25 # needed if you want to use m_dt or m_time

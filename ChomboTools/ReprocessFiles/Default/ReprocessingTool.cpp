@@ -38,7 +38,6 @@ int runReprocessingTool(int argc, char *argv[])
     // Load the parameter file and construct the SimulationParameter class
     // To add more parameters edit the SimulationParameters file.
     std::string in_string = argv[argc - 1];
-    pout() << in_string << std::endl;
     char const *in_file = argv[argc - 1];
     GRParmParse pp(0, argv + argc, NULL, in_file);
     SimulationParameters sim_params(pp);
@@ -63,6 +62,7 @@ int runReprocessingTool(int argc, char *argv[])
         current_file << std::setw(6) << std::setfill('0') << ifile;
         std::string restart_file(sim_params.checkpoint_prefix +
                                  current_file.str() + ".3d.hdf5");
+        pout() << "Opening file '" << restart_file << "'" << std::endl;
         HDF5Handle handle(restart_file, HDF5Handle::OPEN_RDONLY);
         gr_amr.setupForRestart(handle);
         handle.close();
