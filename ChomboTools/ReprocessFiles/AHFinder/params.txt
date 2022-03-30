@@ -75,6 +75,7 @@ AH_num_points_v = 40
 AH_verbose = 3
 
 AH_initial_guess = 0.5
+# AH_center = 256 256 0
 
 AH_num_extra_vars = 2
 AH_extra_vars = chi d1_chi
