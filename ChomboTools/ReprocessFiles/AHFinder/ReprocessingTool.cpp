@@ -54,7 +54,7 @@ int runReprocessingTool(int argc, char *argv[])
     bh_amr.set_interpolator(&interpolator);
 
 #if USE_AHFINDER
-    AHSphericalGeometry sph(sim_params.center);
+    AHSphericalGeometry sph(sim_params.AH_center);
     bh_amr.m_ah_finder.add_ah(sph, sim_params.AH_initial_guess,
                               sim_params.AH_params, false);
 #endif

@@ -33,6 +33,7 @@ class SimulationParameters : public SimulationParametersBase
 
 #ifdef USE_AHFINDER
         pp.load("AH_initial_guess", AH_initial_guess);
+        pp.load("AH_center", AH_center, center);
 #endif
     }
 
@@ -40,6 +41,7 @@ class SimulationParameters : public SimulationParametersBase
 
 #ifdef USE_AHFINDER
     double AH_initial_guess;
+    std::array<double, CH_SPACEDIM> AH_center;
 #endif
 };
 
