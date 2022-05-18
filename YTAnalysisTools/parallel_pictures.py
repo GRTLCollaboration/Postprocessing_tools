@@ -56,7 +56,7 @@ if yt.is_root():
 
 # Define a basic plot
 def produce_slice_plot(data, variable, axis = axis):
-    slc = yt.SlicePlot(data, axis, variable, width=(width, "cm"), center = center)
+    slc = yt.SlicePlot(data, axis, fields=('chombo', variable), width=(width, "cm"), center = center)
     # Set the color scale of variables to log
     slc.set_log(variable, False)
     # Plot Boxes (uncomment next line to activate)
