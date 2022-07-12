@@ -1,4 +1,4 @@
-# Chombo specific
+jobscript*
 pout.*
 .bashrc
 *.pbs
@@ -13,38 +13,12 @@ log*
 *.ex
 *.swp
 *.out
+*.dat
 *.hdf5
-*.dSYM
-
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+time.table.*
+*.patch
+*.log
+LB.txt
+*.pyc
+*.mp4
+*.png
