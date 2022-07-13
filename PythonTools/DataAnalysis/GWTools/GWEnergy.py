@@ -1,58 +1,90 @@
 
 """
 Compute GWEnergy from Weyl4ExtractionOut files
+
+NB: following 8.9.32 of Alcubierre
+
 """
 
-import sys
+import sys, glob
 sys.path.append("../Base/")
-
+sys.path.append("../")
+from utils import *
 import SmallDataIOReader, IntegrationMethod, DataIntegration
+
 import math
+import numpy as np
+import multiprocessing
 
-file_prefix = "run_g2_v3_h128/weyl4/Weyl4ExtractionOut_*.dat"
-reader = SmallDataIOReader.FileSet(file_prefix, read = False)
-
-# # General info about files
-# file0 = reader.getFile(0)
-# file0.read()
-# print(file0.getName())
-# print(file0.wasRead())
-# print(file0.getHeaders())
-# print(file0.numBlocks())
-# print(file0.numLabels())
-# print(file0.numValues())
-# print(file0.numRows())
-# print(file0.numColumns())
-# print(file0.getData())
-
-# Integrate all files over time (for each point in space)
 method = IntegrationMethod.midpoint
-weyl4_time_integrated = DataIntegration.integrate_in_time(reader, method, verbose = True, max_steps = -1)
 
-# add column with abs(Weyl4)
-weyl4_time_integrated.addColumn(lambda row, map: row[map['Weyl4_Re'][1]] ** 2 + row[map['Weyl4_Im'][1]] ** 2)
-# ignore other columns
-weyl4_time_integrated.removeColumn(2, 3)
+file_prefix = base_folder + "Weyl4ExtractionOut_*.dat"
+skip = 1
 
-# Now integrate the resulting time integration in space
-weyl4_time_and_space_integrated = DataIntegration.integrate_in_space_2d(weyl4_time_integrated,
-                                        [IntegrationMethod.simpson, IntegrationMethod.trapezium],
-                                        [False, True],
-                                        'r',
-                                        DataIntegration.spherical_area_element)
+reader = SmallDataIOReader.FileSet(file_prefix, read = False, skip=skip)
 
-# don't forget those pi's
-for result in weyl4_time_and_space_integrated:
-    result[1][0] /= (16. * math.pi)
+# read files in parallel
+numFiles = reader.numFiles()
+def readFileAndCutBlock(obj):
+    # unpack
+    i, file = obj
+    print(f"Reading {i+1}/{numFiles}")
+    file.read()
+    # only keep r = 50, r = 60
+    # file.removeBlock(2, file.numBlocks()-1)
+    return file
 
-print(weyl4_time_and_space_integrated)
+pool_obj = multiprocessing.Pool()
+answer = pool_obj.map(readFileAndCutBlock, enumerate(reader))
+pool_obj.close()
+pool_obj.join()
 
-# Quick attempt just with 22 mode:
+reader = SmallDataIOReader.FileSet(files = answer)
 
-# filename = "data/Weyl_integral_22.dat"
-# mode22 = SmallDataIOReader.File(filename)
+times, weyl4_time_integrated_all_time = DataIntegration.integrate_in_time(reader, method, verbose = True, accumulate = True)
 
-# accumulated = integrate_in_time(mode22[0], method, accumulate = True)
-# print(accumulated)
-# print(integrate_in_time(mode22[0], method))
-# print([0][:2])
+def spatial_integration(obj):
+    # unpack
+    i, weyl4_time_integrated = obj
+
+    print(f"Spacial integration {i+1}/{numFiles}")
+    weyl4_time_integrated.addColumn(lambda row, map: row[map['Weyl4_Re'][1]] ** 2 + row[map['Weyl4_Im'][1]] ** 2)
+    weyl4_time_integrated.removeColumn(2, 3)
+
+    weyl4_time_and_space_integrated = DataIntegration.integrate_in_space_2d(weyl4_time_integrated,
+                                            [IntegrationMethod.simpson, IntegrationMethod.trapezium],
+                                            [False, True],
+                                            'r',
+                                            DataIntegration.spherical_area_element)
+
+    power = []
+    for result in weyl4_time_and_space_integrated:
+        power.append( result[1][0] / (16. * math.pi) )
+
+    return power
+
+pool_obj = multiprocessing.Pool()
+power_all_time = pool_obj.map(spatial_integration, enumerate(weyl4_time_integrated_all_time))
+pool_obj.close()
+pool_obj.join()
+
+print("DONE COMPUTING POWER")
+
+# print(power_all_time)
+
+times, energies = DataIntegration.integrate_in_time(power_all_time, method, x=times, verbose=True, accumulate=True)
+
+radii = [str(block.getHeaderValue('r')) for block in reader[0]]
+header = 'time\t\tr = ' + '\t\tr = '.join(radii)
+
+output = np.transpose(np.concatenate([[times], np.transpose(energies)], axis=0))
+
+np.savetxt(f"GW_energies.dat", output, header=header, fmt="%.10f")
+
+# mine for r=50 and r=60:
+# 0.11218792
+# 0.06091224
+# Miren C++:
+# 0.11209019876
+# 0.060865933070
+# error: <0.1%

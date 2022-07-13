@@ -1,4 +1,16 @@
 
+"""
+Use radii of extraction to make a fit and extrapolate to infinity
+
+This uses a 1/r and a 1/r^2 fit to estimate the error
+(see (3) and (4) of https://arxiv.org/pdf/1012.3173.pdf)
+
+This is better than Richardson Extrapolation, because:
+1. uses all the extraction radii, not just 2
+2. is much much less sensitive to noise
+
+"""
+
 import sys, os, glob
 sys.path.append("../Base/")
 sys.path.append("../")
@@ -76,9 +88,9 @@ def data_fit_to_infinity_from_file(file_path, mass, dest = None):
 # Below is just a fancy way of running the function above for many folders, in parallel
 
 # pairs of folder + spacetime mass of the respective run
-folders_for_infinity_fit = [("g1", 1)]
+folders_for_infinity_fit = [("gm1", 1)]
 
-data_folder = "./" # folder where to look for folders
+data_folder = "/home/taigofr/Documents/MyDocuments/Education/PhD/Projects/EsGB_Llibert/" # folder where to look for folders
 
 # filename in each folder
 filename = "strain_??_cutoff_low_0.015.dat"

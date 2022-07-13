@@ -1,9 +1,4 @@
 
-import SmallDataIOReader, IntegrationMethod
-import copy # use deepcopy
-import numpy
-import math
-
 """
 Use this file to integrate data in time or space
 Useful functions are:
@@ -22,6 +17,11 @@ E.g. To integrate Weyl Extraction files over time (integrate a set of files, for
 weyl4_time_integrated = DataIntegration.integrate_in_time(fileSet, someMethod, verbose = True, max_steps = -1)
 
 """
+
+import SmallDataIOReader, IntegrationMethod
+import copy # use deepcopy
+import numpy
+import math
 
 def computeDt(data, x):
     """ x only needed if data is a ndarray or list"""

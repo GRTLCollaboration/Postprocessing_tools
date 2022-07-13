@@ -1,4 +1,9 @@
 
+"""
+Compute time of merger in retarded time, with error estimate, based on amplitude
+of complex Weyl for each radii
+"""
+
 import sys
 sys.path.append("../Base/")
 sys.path.append("../")
@@ -11,8 +16,7 @@ import numpy as np
 # get the time of merger for the following files:
 # 2nd parameter is the spacetime mass (it helps aligning the waves)
 files = [
-    ("./run_g3_positive_v2_h112/Weyl_integral_22.dat", initial_mass_g3_0_01_v2),
-    ("./run_g3_negative_v2_h112/Weyl_integral_22.dat", initial_mass_g3_m0_01_v2),
+    ("/home/taigofr/Documents/MyDocuments/Education/PhD/Projects/EsGB_Llibert/g1/Weyl4_mode_22.dat", 1),
 ]
 
 ##########

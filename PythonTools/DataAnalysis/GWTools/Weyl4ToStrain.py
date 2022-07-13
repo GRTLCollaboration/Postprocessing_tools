@@ -1,5 +1,10 @@
 
-# same as weyl_to_strain.py, but doing full FFT instead of 2 real ones
+"""
+Convert Weyl4 to Strain (complex values) using FFT
+
+NB: Time domain direct integral has a lot of error noise when I tried
+(check Section F of https://arxiv.org/abs/2112.15529)
+"""
 
 import sys, os, glob
 sys.path.append("../Base/")

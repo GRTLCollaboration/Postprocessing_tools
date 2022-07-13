@@ -1,4 +1,9 @@
 
+"""
+A collection of useful generic functions.
+They have their own descriptions.
+"""
+
 from scipy import integrate # to integrate GW amplitude to align different resolutions
 import math
 import scipy.signal
@@ -236,6 +241,7 @@ def plot_FFT(waves, dts=None, max_frequency = None):
     plt.show()
 
 
+# Smart conversion to phase such that phase is as continuous as possible
 def convert_complex_to_amplitude_and_phase(times, values, start_monoticity):
     num_cycles = 0
     # sign = 0

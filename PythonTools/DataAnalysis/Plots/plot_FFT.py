@@ -1,4 +1,8 @@
 
+"""
+Helping file to plot the FFT of some column in some file faster
+"""
+
 import sys
 sys.path.append("../")
 from utils import *

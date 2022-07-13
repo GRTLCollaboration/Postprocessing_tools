@@ -1,5 +1,16 @@
 
+"""
+Compute the mismatch between 2 GWs
+
+NB: this outputs a bunch of warnings while doing the minimization of the mismatch
+Don't worry, not really a problem.
+
+(check Section G of https://arxiv.org/abs/2112.15529)
+
+"""
+
 import sys, os
+sys.path.append("../Base/")
 sys.path.append("../")
 from utils import *
 from Weyl4ToStrain import *
@@ -224,9 +235,9 @@ def compute_all_mismatch_data(file_GR, file_other, cut_off_high_freq=0.2):
                 PSD=Constant_PSD(),
                 label=label)
 
-    # masses from 1 to ~1000 (2*10=1024)
-    # use 10.01 for the np.arrange to include '10'
-    solar_masses = np.power(2, np.arange(0, 10.01, 0.5))
+    # masses from ~10 to ~250
+    # use 8.01 for the np.arrange to include '8'
+    solar_masses = np.power(2, np.arange(3, 8.01, 0.5))
     # solar_masses = np.array([100])
 
     obj = [strain_GR, strain_other, cut_off_high_freq, LIGO_PSD(), label]
@@ -254,12 +265,10 @@ def compute_all_mismatch_data(file_GR, file_other, cut_off_high_freq=0.2):
 if __name__ == "__main__":
 
     filename = "strain_22_cutoff_low_0.015_at_infinity.dat"
-    # folder_source = "g3_high/run_g3_negative_v2_h112_higher_value/"
-    folder_source = "GR/run_GR_v2_h112/"
+    folder_source = "./g1/"
 
     folders_compare = [
-        "g2_0.02/run_g2_v2_h112/",
-        "g3_high/run_g3_negative_v2_h112_higher_value/",
+        "./gm1/",
     ]
 
     for folder in folders_compare:
