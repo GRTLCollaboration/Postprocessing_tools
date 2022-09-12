@@ -14,9 +14,8 @@ components = ["phi", "lapse", "chi"]
 [x_max, y_max, z_max] = [3000, 0, 0]
 
 def rendering():
-    for name in components:
-
-        def lineout():
+    
+        def lineout(name):
 
             AddPlot("Curve", "operators/Lineout/" + name, 1, 1)
             LineoutAtts = LineoutAttributes()
@@ -24,7 +23,7 @@ def rendering():
             LineoutAtts.point2 = (x_max, y_max, z_max)
             SetOperatorOptions(LineoutAtts, 1)    
 
-        def window_options():
+        def window_options(name):
 
             SaveWindowAtts = SaveWindowAttributes()
             SaveWindowAtts.outputToCurrentDirectory = 1
@@ -34,19 +33,20 @@ def rendering():
             SetSaveWindowAttributes(SaveWindowAtts)
 
 
-        print("Component: " + name)
-
         # Evolve reading next hdf5 files
         for i in range(begin_file ,end_file ,file_step):
             hdf5filename = plt_prefix + "%06i.3d.hdf5"%i
             print("Analysing file " + hdf5filename)
             OpenDatabase(path_to_hdf5_files + hdf5filename)
 
-            window_options()
-            lineout()
-            DrawPlots()
-            SaveWindow()
-            DeleteAllPlots()
+            for name in components:
+
+                window_options(name)
+                lineout(name)
+                DrawPlots()
+                SaveWindow()
+                DeleteAllPlots()
+                print("Component: " + name)
 
             CloseDatabase(path_to_hdf5_files + hdf5filename) 
 
